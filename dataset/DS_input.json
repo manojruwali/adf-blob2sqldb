@@ -5,12 +5,20 @@
 			"referenceName": "LS_AzureBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"inputfolder": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "input",
+				"folderPath": {
+					"value": "@dataset().inputfolder",
+					"type": "Expression"
+				},
 				"container": "filecontainer"
 			},
 			"columnDelimiter": ",",
