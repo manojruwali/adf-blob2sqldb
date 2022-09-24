@@ -61,14 +61,26 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_forEach_file",
-						"type": "DatasetReference"
+						"referenceName": "DS_folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": {
+								"value": "@pipeline().parameters.inputfolder",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_forEach_file",
-						"type": "DatasetReference"
+						"referenceName": "DS_folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": {
+								"value": "@pipeline().parameters.archivefolder",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			},
@@ -221,7 +233,13 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "DS_folder",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": {
+								"value": "@pipeline().parameters.inputfolder",
+								"type": "Expression"
+							}
+						}
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
