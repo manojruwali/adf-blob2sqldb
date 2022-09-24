@@ -86,8 +86,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DS_forEach_file",
-						"type": "DatasetReference"
+						"referenceName": "DS_folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": {
+								"value": "@pipeline().parameters.inputfolder",
+								"type": "Expression"
+							}
+						}
 					},
 					"fieldList": [
 						"childItems"
@@ -168,7 +174,13 @@
 							"inputs": [
 								{
 									"referenceName": "DS_forEach_file",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
@@ -209,13 +221,7 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "DS_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": {
-								"value": "@pipeline().parameters.inputfolder",
-								"type": "Expression"
-							}
-						}
+						"type": "DatasetReference"
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
