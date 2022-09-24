@@ -3,88 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "ForEach1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"wildcardFolderPath": {
-								"value": "@pipeline().parameters.inputfolder",
-								"type": "Expression"
-							},
-							"wildcardFileName": "*.csv",
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
-						}
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "DS_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": {
-								"value": "@pipeline().parameters.inputfolder",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "DS_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": {
-								"value": "@pipeline().parameters.archivefolder",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "Get Metadata1",
 				"type": "GetMetadata",
 				"dependsOn": [],
@@ -98,14 +16,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DS_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": {
-								"value": "@pipeline().parameters.inputfolder",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "DS_input",
+						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"childItems"
@@ -138,7 +50,7 @@
 					},
 					"activities": [
 						{
-							"name": "Copy data2",
+							"name": "Copy data1",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -155,11 +67,6 @@
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
-										"wildcardFolderPath": {
-											"value": "@pipeline().parameters.inputfolder",
-											"type": "Expression"
-										},
-										"wildcardFileName": "*.csv",
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -168,6 +75,10 @@
 								},
 								"sink": {
 									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "DROP TABLE IF EXISTS @{item().name}",
+										"type": "Expression"
+									},
 									"writeBehavior": "insert",
 									"sqlWriterUseTableLock": false,
 									"tableOption": "autoCreate",
@@ -185,7 +96,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_forEach_file",
+									"referenceName": "Dsinsideloop",
 									"type": "DatasetReference",
 									"parameters": {
 										"filename": {
@@ -212,11 +123,83 @@
 				}
 			},
 			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_input",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_out",
+						"type": "DatasetReference",
+						"parameters": {
+							"output": {
+								"value": "@pipeline().parameters.out",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
 				"name": "Delete1",
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "Copy data2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -232,14 +215,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DS_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": {
-								"value": "@pipeline().parameters.inputfolder",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "DS_input",
+						"type": "DatasetReference"
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
@@ -257,10 +234,7 @@
 			}
 		],
 		"parameters": {
-			"inputfolder": {
-				"type": "string"
-			},
-			"archivefolder": {
+			"out": {
 				"type": "string"
 			}
 		},

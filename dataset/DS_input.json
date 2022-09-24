@@ -1,0 +1,33 @@
+{
+	"name": "DS_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "*.csv",
+				"folderPath": "input",
+				"container": "filecontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CompanyName",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			}
+		]
+	}
+}

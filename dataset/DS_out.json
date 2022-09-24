@@ -1,0 +1,36 @@
+{
+	"name": "DS_out",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"output": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "filecontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CompanyName",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			}
+		]
+	}
+}
